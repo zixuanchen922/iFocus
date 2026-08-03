@@ -1,0 +1,461 @@
+.focus-setup {
+  --focus-text-glow: 0 0 14px rgb(226 255 248 / 16%);
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100%;
+  padding: max(28px, env(safe-area-inset-top)) 24px max(26px, env(safe-area-inset-bottom));
+  color: #f5faf8;
+  font-family: Inter, "SF Pro Display", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  text-align: center;
+}
+
+.focus-setup__brand {
+  margin: 0;
+  font-size: clamp(34px, 10vw, 50px);
+  font-weight: 760;
+  line-height: 1;
+  letter-spacing: -.045em;
+}
+
+.focus-setup__focus-glow {
+  text-shadow:
+    0 0 8px rgb(230 255 249 / 25%),
+    0 0 18px rgb(205 255 242 / 13%);
+}
+
+.focus-setup__orb-slot {
+  flex: 0 0 clamp(180px, 28dvh, 248px);
+}
+
+.focus-setup__form {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  width: min(100%, 430px);
+  min-height: 0;
+}
+
+.focus-setup__prompt {
+  margin: 0 0 18px;
+  font-size: clamp(20px, 5.7vw, 28px);
+  font-weight: 720;
+  line-height: 1.15;
+  letter-spacing: -.025em;
+}
+
+.focus-setup__input {
+  width: 100%;
+  height: 58px;
+  padding: 0 18px;
+  border: 1px solid rgb(225 246 240 / 27%);
+  border-radius: 16px;
+  outline: 0;
+  color: #f5faf8;
+  background: rgb(6 13 12 / 56%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 3%);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 620;
+  letter-spacing: -.01em;
+  text-shadow: var(--focus-text-glow);
+  backdrop-filter: blur(16px) saturate(1.08);
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.focus-setup__input::placeholder {
+  color: rgb(229 241 237 / 38%);
+  text-shadow: none;
+}
+
+.focus-setup__input:focus {
+  border-color: rgb(181 255 236 / 58%);
+  box-shadow: 0 0 0 3px rgb(84 225 208 / 8%), inset 0 1px 0 rgb(255 255 255 / 5%);
+}
+
+.focus-setup__duration {
+  position: relative;
+  display: grid;
+  width: 100%;
+  place-items: center;
+  margin-top: clamp(26px, 4.2dvh, 42px);
+  color: #f7fcfa;
+  text-shadow: var(--focus-text-glow);
+}
+
+.focus-setup__number-group {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  height: clamp(66px, 18vw, 84px);
+  padding-inline: .12em;
+  overflow: hidden;
+  font-size: clamp(64px, 18vw, 88px);
+  letter-spacing: -.065em;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+}
+
+.focus-setup__number-window {
+  position: relative;
+  display: block;
+  flex: 0 0 auto;
+  width: .54em;
+  height: 100%;
+  overflow: visible;
+}
+
+.focus-setup__digit {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: inherit;
+  font-weight: 740;
+  font-variant-numeric: tabular-nums;
+  line-height: .9;
+  letter-spacing: inherit;
+  will-change: transform, filter, opacity;
+}
+
+.focus-setup__unit {
+  position: absolute;
+  bottom: 7px;
+  color: rgb(229 241 237 / 64%);
+  font-size: clamp(17px, 4.8vw, 22px);
+  font-weight: 650;
+  letter-spacing: -.02em;
+  white-space: nowrap;
+}
+
+.focus-setup__duration--digits-2 .focus-setup__unit {
+  left: calc(50% + clamp(35px, 9.72vw, 48px) + 12px);
+}
+
+.focus-setup__duration--digits-3 .focus-setup__unit {
+  left: calc(50% + clamp(52px, 14.58vw, 72px) + 12px);
+}
+
+.focus-setup__duration--up .focus-setup__digit--current.focus-setup__digit--changing {
+  animation: focus-number-enter-up 280ms cubic-bezier(.22, .7, .25, 1);
+}
+
+.focus-setup__duration--up .focus-setup__digit--outgoing {
+  animation: focus-number-exit-up 280ms cubic-bezier(.22, .7, .25, 1) forwards;
+}
+
+.focus-setup__duration--down .focus-setup__digit--current.focus-setup__digit--changing {
+  animation: focus-number-enter-down 280ms cubic-bezier(.22, .7, .25, 1);
+}
+
+.focus-setup__duration--down .focus-setup__digit--outgoing {
+  animation: focus-number-exit-down 280ms cubic-bezier(.22, .7, .25, 1) forwards;
+}
+
+.focus-ruler {
+  position: relative;
+  width: min(72vw, 320px);
+  height: 76px;
+  margin-top: 30px;
+  overflow: hidden;
+  outline: 0;
+  cursor: ew-resize;
+  touch-action: none;
+  user-select: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 13%, #000 87%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 13%, #000 87%, transparent);
+}
+
+.focus-ruler:focus-visible {
+  border-radius: 10px;
+  box-shadow: 0 0 0 2px rgb(84 225 208 / 38%);
+}
+
+.focus-ruler__ticks {
+  position: absolute;
+  inset: 0;
+}
+
+.focus-ruler__tick {
+  position: absolute;
+  top: 20px;
+  width: 2px;
+  height: 18px;
+  border-radius: 99px;
+  background: rgb(225 239 235 / 62%);
+  transform: translateX(-50%);
+  transition: left 120ms cubic-bezier(.2, .7, .3, 1), opacity 120ms ease;
+}
+
+.focus-ruler__tick--major {
+  top: 10px;
+  width: 3px;
+  height: 38px;
+  background: rgb(241 250 247 / 78%);
+}
+
+.focus-ruler__tick small {
+  position: absolute;
+  top: 45px;
+  left: 50%;
+  color: rgb(220 235 230 / 42%);
+  font-size: 11px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  transform: translateX(-50%);
+}
+
+.focus-ruler__indicator {
+  position: absolute;
+  z-index: 2;
+  top: 5px;
+  left: 50%;
+  width: 4px;
+  height: 49px;
+  border-radius: 999px;
+  background: #54e1d0;
+  box-shadow: 0 0 10px rgb(84 225 208 / 86%), 0 0 24px rgb(84 225 208 / 36%);
+  translate: -50% 0;
+  pointer-events: none;
+}
+
+.focus-setup__start {
+  width: min(48vw, 190px);
+  min-height: 56px;
+  margin-top: auto;
+  border: 1px solid rgb(255 255 255 / 60%);
+  border-radius: 17px;
+  color: #07100e;
+  background: #f5faf8;
+  box-shadow: 0 0 24px rgb(225 255 247 / 17%);
+  font: inherit;
+  font-size: 17px;
+  font-weight: 780;
+  letter-spacing: .09em;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+}
+
+.focus-setup__start:hover:not(:disabled) {
+  box-shadow: 0 0 32px rgb(225 255 247 / 28%);
+  transform: translateY(-1px);
+}
+
+.focus-setup__start:active:not(:disabled) { transform: scale(.97); }
+
+.focus-setup__start:disabled {
+  cursor: not-allowed;
+  opacity: .38;
+  box-shadow: none;
+}
+
+.setup-mode .mascot {
+  z-index: 6;
+  top: clamp(138px, 20dvh, 205px);
+  left: 50%;
+  width: clamp(94px, 26vw, 132px);
+}
+
+.app-shell[data-state="starting"] .focus-setup {
+  pointer-events: none;
+  animation: focus-setup-fade-out 430ms ease-out forwards;
+}
+
+.app-shell[data-state="starting"] .mascot {
+  opacity: 0;
+  animation: none;
+}
+
+.orb-transition-clone {
+  position: fixed;
+  z-index: 100;
+  margin: 0;
+  translate: none;
+  transform-origin: center;
+  pointer-events: none;
+  will-change: top, left, width, height, transform;
+}
+
+.orb-transition-clone .orb-grounding {
+  opacity: 0 !important;
+}
+
+.focus-orb-target-stage {
+  position: fixed;
+  z-index: -100;
+  top: 0;
+  left: 0;
+  width: calc(100% - var(--rail-width));
+  height: 100dvh;
+  visibility: hidden;
+  perspective: 1100px;
+  perspective-origin: 50% 43%;
+  pointer-events: none;
+}
+
+.focus-orb-target-probe {
+  position: absolute;
+  top: 45%;
+  left: 18%;
+  width: clamp(118px, 21vmin, 190px);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  transform: translate3d(0, 0, -45px) scale(.97);
+  transform-origin: 50% 100%;
+}
+
+.app-shell[data-state="focused"][data-orb-arriving="true"] .mascot .orb-grounding {
+  animation: focus-orb-shadow-arrive 360ms ease-out both;
+}
+
+.app-shell[data-state="starting"] .focus-clock {
+  animation: focus-clock-reveal 520ms 260ms cubic-bezier(.2, .75, .25, 1) both;
+}
+
+.app-shell:not([data-state="idle"]) .scene-horizon-light {
+  top: 55%;
+}
+
+.app-shell:not([data-state="idle"]) .scene-floor {
+  top: 57%;
+}
+
+.app-shell:not([data-state="idle"]) .scene-pool-light {
+  top: 65%;
+}
+
+.app-shell[data-state="starting"] .developer-panel,
+.app-shell[data-state="starting"] .portrait-hint {
+  pointer-events: none;
+  opacity: 0;
+}
+
+@keyframes focus-setup-fade-out {
+  from { opacity: 1; filter: blur(0); }
+  to { opacity: 0; filter: blur(7px); }
+}
+
+@keyframes focus-orb-shadow-arrive {
+  from { opacity: 0; filter: blur(10px); }
+  to { opacity: 1; filter: blur(0); }
+}
+
+@keyframes focus-clock-reveal {
+  from { opacity: 0; filter: blur(10px); scale: 1; }
+  to { opacity: 1; filter: blur(0); scale: 1.2; }
+}
+
+@keyframes focus-number-enter-up {
+  from { opacity: .18; filter: blur(8px); transform: translateY(28%); }
+  62% { opacity: .82; filter: blur(3px); }
+  to { opacity: 1; filter: blur(0); transform: translateY(0); }
+}
+
+@keyframes focus-number-exit-up {
+  from { opacity: .72; filter: blur(1px); transform: translateY(0); }
+  to { opacity: 0; filter: blur(8px); transform: translateY(-28%); }
+}
+
+@keyframes focus-number-enter-down {
+  from { opacity: .18; filter: blur(8px); transform: translateY(-28%); }
+  62% { opacity: .82; filter: blur(3px); }
+  to { opacity: 1; filter: blur(0); transform: translateY(0); }
+}
+
+@keyframes focus-number-exit-down {
+  from { opacity: .72; filter: blur(1px); transform: translateY(0); }
+  to { opacity: 0; filter: blur(8px); transform: translateY(28%); }
+}
+
+@media (orientation: portrait) {
+  .focus-orb-target-stage {
+    top: 50%;
+    left: 50%;
+    width: 100dvh;
+    height: 100dvw;
+    transform: translate(-50%, -50%) rotate(90deg);
+    transform-origin: center;
+  }
+
+  .app-shell[data-state="idle"] .visual-stage.setup-mode {
+    width: 100%;
+    height: 100%;
+  }
+
+  .app-shell[data-state="idle"] .developer-panel,
+  .app-shell[data-state="idle"] .portrait-hint {
+    display: none;
+  }
+
+  .app-shell[data-state="starting"] .visual-stage {
+    width: 100%;
+    height: 100%;
+  }
+
+  .app-shell[data-state="starting"] .color-wave {
+    opacity: 0;
+    animation: none;
+  }
+
+  .app-shell[data-state="starting"] .focus-clock {
+    opacity: 0;
+    animation: none;
+  }
+
+  .app-shell:not([data-state="idle"]):not([data-state="starting"]) .visual-stage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100dvh;
+    height: 100dvw;
+    transform: translate(-50%, -50%) rotate(90deg);
+    transform-origin: center;
+  }
+
+  .app-shell:not([data-state="idle"]):not([data-state="starting"]) .mascot {
+    top: 45%;
+    left: 18%;
+    width: clamp(118px, 21vmin, 190px);
+  }
+
+  .app-shell:not([data-state="idle"]):not([data-state="starting"]) .focus-clock {
+    top: 44%;
+    left: 50%;
+    width: clamp(300px, 49vmin, 448px);
+  }
+
+  .app-shell:not([data-state="idle"]):not([data-state="starting"]) .developer-panel,
+  .app-shell:not([data-state="idle"]):not([data-state="starting"]) .portrait-hint {
+    display: none;
+  }
+
+  .app-shell[data-state="focused"] .focus-clock {
+    animation: focus-clock-reveal 520ms cubic-bezier(.2, .75, .25, 1) both;
+  }
+
+}
+
+@media (max-height: 720px) and (orientation: portrait) {
+  .focus-setup { padding-top: max(20px, env(safe-area-inset-top)); }
+  .focus-setup__brand { font-size: 32px; }
+  .focus-setup__orb-slot { flex-basis: 150px; }
+  .setup-mode .mascot { top: 126px; width: 88px; }
+  .focus-setup__prompt { margin-bottom: 12px; font-size: 19px; }
+  .focus-setup__input { height: 50px; }
+  .focus-setup__duration { margin-top: 24px; }
+  .focus-setup__duration strong { font-size: 58px; }
+  .focus-ruler { height: 64px; margin-top: 24px; }
+  .focus-setup__start { min-height: 50px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .focus-setup__duration strong,
+  .focus-ruler__tick {
+    animation: none !important;
+    transition: none !important;
+  }
+}
