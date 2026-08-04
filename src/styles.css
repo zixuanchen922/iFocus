@@ -20,16 +20,6 @@ body,
   background: #000;
 }
 
-html:fullscreen,
-html:fullscreen body,
-html:fullscreen #root,
-html:-webkit-full-screen,
-html:-webkit-full-screen body,
-html:-webkit-full-screen #root {
-  width: 100%;
-  height: 100%;
-}
-
 button {
   font: inherit;
 }
@@ -43,12 +33,6 @@ button {
   background: #050808;
   transition: background-color 420ms ease;
   isolation: isolate;
-}
-
-.app-shell:fullscreen,
-.app-shell:-webkit-full-screen {
-  width: 100vw;
-  height: 100vh;
 }
 
 .visual-stage {
@@ -66,6 +50,21 @@ button {
 
 .visual-stage.setup-mode {
   place-items: center;
+}
+
+.orb-coordinate-space {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  width: min(100%, calc(100dvh * 1000 / 460));
+  aspect-ratio: 1000 / 460;
+  margin: auto;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+
+.app-shell[data-state="idle"] .orb-coordinate-space {
+  z-index: 6;
 }
 
 .visual-stage::after {
@@ -220,6 +219,20 @@ button {
   transform-style: preserve-3d;
 }
 
+.mascot[role="button"] {
+  cursor: pointer;
+}
+
+.mascot[role="button"]:focus-visible {
+  outline: 2px solid rgb(245 255 252 / 88%);
+  outline-offset: 10px;
+  border-radius: 50%;
+}
+
+.app-shell[data-paused="true"] .focus-clock {
+  filter: saturate(.55) brightness(.78);
+}
+
 .orb-body {
   position: absolute;
   z-index: 2;
@@ -289,17 +302,37 @@ button {
   opacity: 0;
 }
 
-.mascot-idle {
+.mascot-idle,
+.mascot-paused {
   animation: setup-orb-breathe 3.8s ease-in-out infinite;
 }
 
-.mascot-idle .orb-grounding {
+.mascot-idle .orb-grounding,
+.mascot-paused .orb-grounding {
   animation: setup-grounding-breathe 3.8s ease-in-out infinite;
 }
 
-.mascot-idle .orb-eye {
+.mascot-idle .orb-eye,
+.mascot-paused .orb-eye {
   animation: setup-eye-blink 4.8s linear infinite;
   transform-origin: 50% 50%;
+}
+
+.app-shell[data-paused="true"] .orb-coordinate-space {
+  z-index: 41;
+}
+
+.app-shell[data-paused="true"] .mascot-paused {
+  --orb-layout-left: 12%;
+  --orb-layout-top: 25%;
+  animation:
+    paused-orb-appear 480ms ease-out both,
+    setup-orb-breathe 3.8s 480ms ease-in-out infinite;
+}
+
+@keyframes paused-orb-appear {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes setup-orb-breathe {
@@ -403,8 +436,8 @@ button {
 }
 
 .app-shell[data-display="001"] .mascot-distracted {
-  animation-name: distraction-approach;
-  animation-timing-function: linear;
+  opacity: 0;
+  animation: none;
 }
 
 .app-shell[data-display="001"] .mascot-distracted .orb-body {
@@ -424,6 +457,130 @@ button {
 .app-shell[data-display="001"] .mascot-distracted .orb-eye-normal {
   animation: none;
   opacity: 1;
+}
+
+.primary-reminder-model,
+.secondary-reminder-model,
+.tertiary-reminder-model,
+.abandon-reminder-model,
+.completion-reminder-model {
+  position: absolute;
+  z-index: 9;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.completion-firework-particle {
+  fill: #efffff;
+  filter: drop-shadow(0 0 3px rgb(74 224 255 / 78%));
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: completion-firework-particle 720ms calc(var(--completion-firework-delay) + var(--particle-delay)) cubic-bezier(.18, .7, .25, 1) both;
+}
+
+.completion-firework-particle:nth-of-type(3n) {
+  fill: #55e4ff;
+}
+
+.completion-firework-ring {
+  fill: none;
+  stroke: rgb(116 235 255 / 88%);
+  stroke-width: 1.4;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: completion-firework-ring 620ms var(--completion-firework-delay) ease-out both;
+}
+
+@keyframes completion-firework-particle {
+  0% { opacity: 0; transform: translate(0, 0) scale(.2); }
+  16% { opacity: 1; }
+  70% { opacity: .94; transform: translate(var(--particle-x), var(--particle-y)) scale(1); }
+  100% { opacity: 0; transform: translate(var(--particle-x), calc(var(--particle-y) + 7px)) scale(.35); }
+}
+
+@keyframes completion-firework-ring {
+  0% { opacity: 0; transform: scale(.18); }
+  18% { opacity: .9; }
+  100% { opacity: 0; transform: scale(9.5); }
+}
+
+.app-shell[data-abandoning="true"] .mascot {
+  opacity: 0;
+}
+
+.app-shell[data-abandoning="true"] .visual-stage::after {
+  animation: distraction-blackout 4.2s linear both;
+}
+
+.app-shell[data-abandoning="true"] .focus-clock {
+  animation: distraction-clock-hide 4.2s linear both;
+}
+
+.app-shell[data-completing="true"] .mascot {
+  opacity: 0;
+}
+
+.app-shell[data-completing="true"] .visual-stage::after {
+  animation: distraction-blackout 4.2s linear both;
+}
+
+.app-shell[data-completing="true"] .focus-clock {
+  animation: distraction-clock-hide 4.2s linear both;
+}
+
+.end-home-button {
+  position: fixed;
+  z-index: 22;
+  bottom: max(12%, calc(env(safe-area-inset-bottom) + 24px));
+  left: 50%;
+  min-width: clamp(112px, 16vw, 150px);
+  min-height: 54px;
+  padding: 0 20px;
+  border: 1px solid rgb(245 255 252 / 72%);
+  border-radius: 17px;
+  color: #07100e;
+  background: #f5fffc;
+  box-shadow: 0 0 26px rgb(225 255 247 / 20%);
+  font-size: clamp(15px, 2.1vw, 18px);
+  font-weight: 780;
+  letter-spacing: .14em;
+  translate: -50% 0;
+  cursor: pointer;
+}
+
+.end-home-button:active {
+  transform: scale(.96);
+}
+
+.app-shell[data-display="002"] .mascot-distracted {
+  opacity: 0;
+  animation: none;
+}
+
+.app-shell[data-display="003"] .mascot-distracted {
+  opacity: 0;
+  animation: none;
+}
+
+.app-shell[data-state="recovered"] .mascot-recovered {
+  opacity: 0;
+  animation: none;
+}
+
+.app-shell[data-state="recovered"] .focus-clock {
+  opacity: 0;
+}
+
+.mascot-focused {
+  top: 50%;
+  left: 18%;
+  width: min(12vw, 26.087vh);
 }
 
 .app-shell[data-display="002"] .mascot-distracted .orb-eye-alert-core {
@@ -507,14 +664,17 @@ button {
 }
 
 .focus-clock {
+  --clock-size: clamp(300px, 49vmin, 448px);
+  --clock-half-size: clamp(150px, 24.5vmin, 224px);
+  --clock-scale: 1.2;
   position: absolute;
-  left: 50%;
+  left: calc(53% - var(--clock-half-size));
   z-index: 3;
-  top: 44%;
-  width: clamp(300px, 49vmin, 448px);
+  top: calc(47% - var(--clock-half-size));
+  width: var(--clock-size);
   aspect-ratio: 1;
   border-radius: 50%;
-  translate: -50% -50%;
+  scale: var(--clock-scale);
 }
 
 .focus-clock::before {
@@ -680,6 +840,168 @@ button {
 
 .new-task-button:active {
   transform: translateX(-50%) scale(.97);
+}
+
+.focus-control-backdrop {
+  position: fixed;
+  z-index: 40;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgb(0 0 0 / 48%);
+  backdrop-filter: blur(16px) saturate(.72);
+}
+
+.focus-control-dialog {
+  width: min(72vw, 520px);
+  padding: 0;
+  border: 0;
+  color: #f5fffc;
+  background: transparent;
+  box-shadow: none;
+  text-align: center;
+}
+
+.focus-control-dialog small {
+  display: block;
+  overflow: hidden;
+  margin-bottom: 10px;
+  color: rgb(224 244 237 / 55%);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.focus-control-dialog h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.focus-control-dialog p {
+  margin: 10px 0 22px;
+  color: rgb(229 244 239 / 68%);
+  font-size: 14px;
+}
+
+.focus-control-dialog .focus-control-error {
+  margin: -8px 0 16px;
+  color: #ff9b91;
+}
+
+.focus-control-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(16px, 4vw, 36px);
+}
+
+.focus-control-actions button {
+  min-height: 58px;
+  padding: 0 22px;
+  border: 1px solid rgb(245 255 252 / 68%);
+  border-radius: 16px;
+  color: #07100e;
+  background: #f5fffc;
+  box-shadow: 0 0 24px rgb(225 255 247 / 16%);
+  font-size: clamp(14px, 2.1vw, 18px);
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.focus-control-actions button.secondary {
+  color: #effbf7;
+  background: rgb(255 255 255 / 8%);
+}
+
+.focus-control-actions button.danger {
+  color: #ffd6d2;
+  background: rgb(96 23 28 / 62%);
+  border-color: rgb(255 125 113 / 46%);
+  box-shadow: 0 0 24px rgb(255 72 55 / 10%);
+}
+
+.focus-control-actions button:disabled {
+  cursor: wait;
+  opacity: .55;
+}
+
+.focus-session-tools {
+  position: fixed;
+  z-index: 20;
+  top: max(16px, env(safe-area-inset-top));
+  right: max(18px, env(safe-area-inset-right));
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: min(48vw, 440px);
+}
+
+.focus-session-task {
+  overflow: hidden;
+  color: rgb(245 255 252 / 78%);
+  font-size: clamp(21px, calc(1.55vw + 10px), 24px);
+  font-weight: 600;
+  letter-spacing: .02em;
+  text-overflow: ellipsis;
+  text-shadow: 0 0 12px rgb(225 255 247 / 16%);
+  white-space: nowrap;
+}
+
+.focus-pause-button {
+  display: grid;
+  flex: 0 0 auto;
+  width: clamp(38px, 5.4vmin, 48px);
+  aspect-ratio: 1;
+  padding: 0;
+  border: 2px solid rgb(248 255 253 / 92%);
+  border-radius: 50%;
+  color: #f8fffd;
+  background: rgb(2 7 6 / 54%);
+  box-shadow: 0 0 9px rgb(225 255 247 / 30%), inset 0 0 10px rgb(225 255 247 / 5%);
+  place-items: center;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+}
+
+.focus-pause-button i {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+}
+
+.focus-pause-button i span {
+  width: 3px;
+  height: 14px;
+  border-radius: 2px;
+  background: currentColor;
+  box-shadow: 0 0 5px rgb(225 255 247 / 28%);
+}
+
+.focus-pause-button:active:not(:disabled) {
+  transform: scale(.94);
+}
+
+.focus-pause-button:disabled {
+  cursor: wait;
+  opacity: .55;
+}
+
+.focus-control-toast {
+  position: fixed;
+  z-index: 35;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  left: 50%;
+  max-width: min(90vw, 520px);
+  margin: 0;
+  padding: 12px 16px;
+  border: 1px solid rgb(255 125 113 / 28%);
+  border-radius: 12px;
+  color: #ffd2cd;
+  background: rgb(54 14 17 / 92%);
+  box-shadow: 0 14px 34px rgb(0 0 0 / 35%);
+  font-size: 13px;
+  translate: -50% 0;
 }
 
 .developer-panel {
@@ -1046,42 +1368,6 @@ button {
   display: none;
 }
 
-.fullscreen-hint {
-  position: fixed;
-  z-index: 40;
-  left: max(14px, env(safe-area-inset-left));
-  bottom: max(14px, env(safe-area-inset-bottom));
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  max-width: min(360px, calc(100vw - 28px));
-  padding: 9px 10px 9px 13px;
-  border: 1px solid rgb(255 255 255 / 16%);
-  border-radius: 13px;
-  color: #fff;
-  background: rgb(14 20 17 / 88%);
-  box-shadow: 0 10px 30px rgb(0 0 0 / 24%);
-  font-size: 11px;
-  font-weight: 650;
-  backdrop-filter: blur(18px);
-}
-
-.fullscreen-hint button {
-  display: grid;
-  flex: 0 0 auto;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  color: #fff;
-  background: rgb(255 255 255 / 14%);
-  font-size: 16px;
-  line-height: 1;
-  place-items: center;
-  cursor: pointer;
-}
-
 .sr-only {
   position: absolute;
   width: 1px;
@@ -1164,6 +1450,31 @@ button {
     left: 50%;
     transform: translate3d(0, 0, 190px) scale(8.7);
   }
+}
+
+.distraction-trigger.recovery {
+  border-color: rgb(111 221 194 / 35%);
+  color: #b9f6e7;
+}
+
+.distraction-trigger.recovery.active {
+  border-color: rgb(111 221 194 / 78%);
+  background: rgb(58 151 127 / 18%);
+}
+
+.distraction-trigger.completion {
+  border-color: rgb(85 228 255 / 38%);
+  color: #c9f8ff;
+}
+
+.distraction-trigger.completion:hover {
+  border-color: rgb(85 228 255 / 78%);
+  background: rgb(85 228 255 / 14%);
+}
+
+.distraction-trigger:disabled {
+  cursor: not-allowed;
+  opacity: .38;
 }
 
 @keyframes distraction-shell {
@@ -1409,7 +1720,11 @@ button {
 }
 
 @media (max-height: 380px) {
-  .focus-clock { top: 43%; width: 240px; }
+  .focus-clock {
+    --clock-size: 240px;
+    --clock-half-size: 120px;
+    top: calc(46% - var(--clock-half-size));
+  }
   .focus-clock-content strong { font-size: 50px; }
   .timer-setup { bottom: 7px; min-height: 46px; padding-block: 4px; }
   .mascot, .setup-mode .mascot { width: 110px; }
@@ -1426,6 +1741,17 @@ button {
 }
 
 @media (orientation: portrait) {
+  .app-shell[data-state="idle"] .orb-coordinate-space {
+    width: min(100%, calc(100dvh * 460 / 1000));
+    aspect-ratio: 460 / 1000;
+  }
+
+  .app-shell[data-state="idle"] .mascot {
+    --orb-layout-left: var(--orb-portrait-left);
+    --orb-layout-top: var(--orb-portrait-top);
+    --orb-layout-width: var(--orb-portrait-width);
+  }
+
   .mascot,
   .setup-mode .mascot { top: 45%; left: 14%; width: clamp(82px, 24vmin, 132px); }
   .focus-clock { top: 42%; left: 58%; width: min(64vw, 300px); }

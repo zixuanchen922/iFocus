@@ -22,6 +22,7 @@ interface FocusSetupScreenProps {
   onTaskNameChange: (value: string) => void;
   onDurationChange: (value: number) => void;
   onEngagementChange: (engaged: boolean) => void;
+  onOpenProfile: () => void;
   onStart: (session: FocusSessionDraft) => void;
 }
 
@@ -36,6 +37,7 @@ export default function FocusSetupScreen({
   onTaskNameChange,
   onDurationChange,
   onEngagementChange,
+  onOpenProfile,
   onStart,
 }: FocusSetupScreenProps) {
   const previousDuration = useRef(durationMinutes);
@@ -231,14 +233,19 @@ export default function FocusSetupScreen({
           <i className="focus-ruler__indicator" aria-hidden="true" />
         </div>
 
-        <button
-          className="focus-setup__start"
-          type="submit"
-          disabled={!taskName.trim()}
-          data-testid="start-focus"
-        >
-          START
-        </button>
+        <div className="focus-setup__actions">
+          <button
+            className="focus-setup__start"
+            type="submit"
+            disabled={!taskName.trim()}
+            data-testid="start-focus"
+          >
+            START
+          </button>
+          <button className="focus-setup__profile" type="button" onClick={onOpenProfile} data-testid="open-profile">
+            PROFILE
+          </button>
+        </div>
       </form>
     </section>
   );

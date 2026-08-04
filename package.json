@@ -7,7 +7,9 @@
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "demo": "node server.mjs"
+    "demo": "node server.mjs",
+    "demo:video": "node server.mjs --https --video",
+    "https:setup": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-https.ps1"
   },
   "dependencies": {
     "react": "18.3.1",

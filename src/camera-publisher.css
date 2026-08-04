@@ -1,0 +1,74 @@
+.camera-publisher {
+  position: fixed;
+  z-index: 60;
+  left: max(12px, env(safe-area-inset-left));
+  bottom: max(12px, env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: min(420px, calc(100vw - 24px));
+  min-height: 36px;
+  padding: 6px 7px 6px 10px;
+  border: 1px solid rgb(255 255 255 / 16%);
+  border-radius: 12px;
+  color: #fff;
+  background: rgb(0 0 0 / 76%);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 20%);
+  font: 600 10px/1.3 Inter, "SF Pro Display", "PingFang SC", sans-serif;
+  backdrop-filter: blur(12px);
+}
+
+.camera-publisher[hidden] {
+  display: none;
+}
+
+.camera-publisher > span {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #8c9490;
+}
+
+.camera-publisher-streaming > span {
+  background: #39dc82;
+  box-shadow: 0 0 8px rgb(57 220 130 / 80%);
+}
+
+.camera-publisher-error > span,
+.camera-publisher-disabled > span {
+  background: #ff5b4a;
+}
+
+.camera-publisher p {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.camera-publisher button {
+  min-height: 26px;
+  flex: 0 0 auto;
+  padding: 0 9px;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 8px;
+  color: #fff;
+  background: rgb(255 255 255 / 12%);
+  font: inherit;
+  cursor: pointer;
+}
+
+.camera-publisher button:disabled {
+  opacity: .45;
+  cursor: default;
+}
+
+.camera-publisher-media {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
