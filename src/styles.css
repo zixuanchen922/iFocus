@@ -1015,8 +1015,11 @@ button {
   border: 0;
   background: transparent;
   box-shadow: none;
-  pointer-events: none;
   transform: translateY(-50%);
+}
+
+.developer-panel > * {
+  pointer-events: auto;
 }
 
 .developer-panel--hidden .distraction-triggers,
