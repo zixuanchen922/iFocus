@@ -38,6 +38,21 @@ function notifyFocusBackend(path: string, body: Record<string, unknown> = {}) {
   });
 }
 
+async function triggerAction004() {
+  try {
+    const response = await fetch("./api/action/execute", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action_id: "004", loop_count: 1 }),
+    });
+    const result = await response.text();
+    if (!response.ok) console.warn(`[action-004] HTTP ${response.status}: ${result}`);
+    else console.log("[action-004] 已触发", result);
+  } catch (error) {
+    console.warn("[action-004] 请求失败", error);
+  }
+}
+
 interface StateConfig {
   label: string;
   color: string;
@@ -1488,6 +1503,12 @@ export default function App() {
       focus_content: session.taskName,
       detection_interval: session.durationMinutes * 60,
     });
+
+    // 点击 START 3 秒后触发 action 004
+    window.setTimeout(() => {
+      console.log("[action-004] 准备触发...");
+      void triggerAction004();
+    }, 3000);
 
     if (startTimerRef.current !== null) window.clearTimeout(startTimerRef.current);
     const orientationRequest = requestLandscapeMode();

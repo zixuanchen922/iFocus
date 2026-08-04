@@ -18,6 +18,7 @@ const HTTPS_PFX_PASSPHRASE_FILE = resolve(
   process.env.HTTPS_PFX_PASSPHRASE_FILE || "certs/ifocus-pfx-passphrase.txt",
 );
 const FOCUS_BACKEND_URL = process.env.FOCUS_BACKEND_URL || "http://192.168.253.241:5001";
+const ACTION_BACKEND_URL = process.env.ACTION_BACKEND_URL || "http://192.168.254.140:8000";
 const HTTPS_ENABLED = process.argv.includes("--https") || process.env.HTTPS_ENABLED === "1";
 const VIDEO_FEED_ENABLED = process.argv.includes("--video") || process.env.VIDEO_FEED_ENABLED === "1";
 const MJPEG_BOUNDARY = "boundary";
@@ -307,6 +308,35 @@ const handleRequest = async (request, response) => {
       sendJson(response, 200, { status: "ok" });
     } catch (error) {
       sendJson(response, 400, { status: "error", message: "更新界面失败" });
+    }
+    return;
+  }
+
+  // 代理 action 执行接口，避免 CORS 问题
+  if (request.method === "POST" && url.pathname === "/api/action/execute") {
+    try {
+      const body = await readJsonBody(request);
+      const actionUrl = new URL("/api/action/execute", ACTION_BACKEND_URL);
+      const upstream = await fetch(actionUrl.toString(), {
+        body: JSON.stringify(body),
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+        signal: AbortSignal.timeout(15_000),
+      });
+      const responseBody = await upstream.text();
+      response.writeHead(upstream.status, {
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "no-store",
+        "Content-Type": upstream.headers.get("content-type") || "application/json; charset=utf-8",
+      });
+      response.end(responseBody);
+    } catch (error) {
+      sendJson(response, 502, {
+        status: "error",
+        message: error instanceof Error && error.name === "TimeoutError"
+          ? "action 接口响应超时"
+          : "无法连接 action 接口",
+      });
     }
     return;
   }
