@@ -1373,9 +1373,7 @@ export default function App() {
       summary: `${display} → ${nextState}`,
       details: JSON.stringify(update),
     });
-    if (display === "000" && ["distracted", "recovered"].includes(stateRef.current)) {
-      return;
-    }
+
     if (display === "111") {
       setActiveDisplay(display);
       transitionTo("recovered");
@@ -1399,7 +1397,7 @@ export default function App() {
     }
     setActiveDisplay(display);
     if (nextState === "distracted") setDisplayDuration(duration && duration > 0 ? duration : 4.2);
-    transitionTo(nextState, nextState === "distracted" ? undefined : duration);
+    transitionTo(nextState);
   }, [appendDisplayLog, transitionTo]);
 
   const completeRecovery = useCallback(() => {
