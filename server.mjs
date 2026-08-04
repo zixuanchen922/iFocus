@@ -225,15 +225,6 @@ function broadcastVideoFrame(frame) {
   }
 }
 
-function requireHttps(request, response) {
-  if (request.socket.encrypted) return true;
-  sendJson(response, 426, {
-    status: "error",
-    message: `视频流仅允许通过 HTTPS 访问，请使用 https://<电脑IP>:${HTTPS_PORT}`,
-  });
-  return false;
-}
-
 function loadHttpsOptions() {
   if (existsSync(HTTPS_PFX_FILE) && existsSync(HTTPS_PFX_PASSPHRASE_FILE)) {
     return {
@@ -355,7 +346,6 @@ const handleRequest = async (request, response) => {
       sendJson(response, 404, { status: "error", message: "视频流功能未启用" });
       return;
     }
-    if (!requireHttps(request, response)) return;
     if (!String(request.headers["content-type"] || "").toLowerCase().startsWith("image/jpeg")) {
       sendJson(response, 415, { status: "error", message: "视频帧必须是 image/jpeg" });
       return;
@@ -388,7 +378,6 @@ const handleRequest = async (request, response) => {
       sendJson(response, 404, { status: "error", message: "视频流功能未启用" });
       return;
     }
-    if (!requireHttps(request, response)) return;
 
     response.writeHead(200, {
       "Access-Control-Allow-Origin": "*",

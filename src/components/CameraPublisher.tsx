@@ -110,8 +110,10 @@ export default function CameraPublisher() {
           return;
         }
         if (!window.isSecureContext || window.location.protocol !== "https:") {
-          setMode("error");
-          setMessage(`摄像头需要 HTTPS，请改用端口 ${status.https_port}`);
+          const host = window.location.hostname || "电脑IP";
+          const port = status.https_port;
+          setMode("idle");
+          setMessage(`摄像头需要 HTTPS，请访问 https://${host}:${port}/?camera=1`);
           return;
         }
         setMode("idle");
