@@ -1248,6 +1248,7 @@ export default function App() {
   });
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [, setSoundReady] = useState(false);
+  const [devPanelVisible, setDevPanelVisible] = useState(true);
   const stateRef = useRef<FocusState>(state);
   const audioContextRef = useRef<AudioContext | null>(null);
   const durationTimerRef = useRef<number | null>(null);
@@ -1375,8 +1376,8 @@ export default function App() {
     });
 
     if (display === "111") {
-      setActiveDisplay(display);
-      transitionTo("recovered");
+      setActiveDisplay("000");
+      transitionTo("focused");
       return;
     }
     if (nextState === "distracted" && ["001", "002", "003"].includes(display)) {
@@ -1848,7 +1849,7 @@ export default function App() {
         </div>
       )}
 
-      <aside className="developer-panel" aria-label="开发者测试面板">
+      <aside className={`developer-panel ${devPanelVisible ? "" : "developer-panel--hidden"}`} aria-label="开发者测试面板" onDoubleClick={() => setDevPanelVisible((v) => !v)}>
         <div className="developer-heading">
           <div>
             <span>DEVELOPER</span>

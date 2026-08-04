@@ -86,6 +86,7 @@ export default function CameraPublisher() {
   const streamRef = useRef<MediaStream | null>(null);
   const timerRef = useRef<number | null>(null);
   const publishingRef = useRef(false);
+  const [hidden, setHidden] = useState(false);
 
   const releaseCamera = useCallback(() => {
     publishingRef.current = false;
@@ -218,9 +219,10 @@ export default function CameraPublisher() {
   const canStart = mode === "idle" || mode === "error";
   return (
     <aside
-      className={`camera-publisher camera-publisher-${mode}`}
+      className={`camera-publisher camera-publisher-${mode} ${hidden ? "camera-publisher-hidden" : ""}`}
       aria-label="摄像头视频流控制"
       hidden={!activated || mode === "disabled"}
+      onDoubleClick={() => setHidden((v) => !v)}
     >
       <span aria-hidden="true" />
       <p>{message}</p>

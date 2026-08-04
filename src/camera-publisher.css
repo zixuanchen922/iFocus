@@ -18,6 +18,10 @@
   backdrop-filter: blur(12px);
 }
 
+.camera-publisher.camera-publisher-hidden {
+  display: none;
+}
+
 .camera-publisher[hidden] {
   display: none;
 }

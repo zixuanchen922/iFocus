@@ -75,8 +75,8 @@ function validateDisplayUpdate(payload) {
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) return "请求体必须是 JSON 对象";
   const display = normalizeDisplay(payload.display);
   if (!display) return "缺少 display 字段";
-  if (!["000", "001", "002", "003"].includes(display)) {
-    return "display 目前仅支持 000、001、002 或 003";
+  if (!["000", "001", "002", "003", "111"].includes(display)) {
+    return "display 目前仅支持 000、001、002、003 或 111";
   }
   if (payload.text !== undefined && typeof payload.text !== "string") return "text 必须是字符串";
   if (payload.focus_state !== undefined && typeof payload.focus_state !== "string") return "focus_state 必须是字符串";
