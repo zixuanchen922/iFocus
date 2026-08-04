@@ -1022,16 +1022,10 @@ button {
   pointer-events: auto;
 }
 
-.developer-panel--hidden .distraction-triggers,
-.developer-panel--hidden .display-log-panel,
-.developer-panel--hidden .developer-heading,
-.developer-panel--hidden .developer-footer {
-  display: none !important;
-}
-
 .developer-heading,
 .display-log-panel,
-.developer-footer {
+.developer-footer,
+.distraction-triggers {
   display: none !important;
 }
 
